@@ -5,37 +5,42 @@ from django.contrib.auth.models import User
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
-        # Get sender & receiver from URL route parameters
         self.sender = self.scope['url_route']['kwargs']['sender']
         self.receiver = self.scope['url_route']['kwargs']['receiver']
 
-        # Verify that sender and receiver are valid users
+        # Log connection details for debugging
+        print(f"WebSocket connection: sender={self.sender}, receiver={self.receiver}")
+
+        # Verify sender and receiver exist in the database
         try:
             sender_user = User.objects.get(username=self.sender)
             receiver_user = User.objects.get(username=self.receiver)
         except User.DoesNotExist:
-            self.close()
+            print(f"User not found: sender={self.sender}, receiver={self.receiver}")
+            self.close(code=4001, reason="Invalid user")
             return
 
-        # Create a unique private chat room for the two users
+        # Create a symmetric room group name
         self.room_group_name = f"chat_{min(self.sender, self.receiver)}_{max(self.sender, self.receiver)}"
+        print(f"Joining group: {self.room_group_name}")
 
-        # Add user to this private chat room
+        # Add this connection to the group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
         )
 
         self.accept()
+        print(f"Connection accepted for {self.sender}")
 
     def disconnect(self, close_code):
-        """ Notify users when someone disconnects """
+        # Notify group of disconnection
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 "type": "chat_message",
                 "message": f"{self.sender} has left the chat.",
-                "sender": "System",  # System message
+                "sender": "System",
             }
         )
 
@@ -43,28 +48,36 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        print(f"Disconnected: {self.sender}, close_code={close_code}")
 
     def receive(self, text_data):
-        """ Handle incoming messages and send them only to the recipient """
-        text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
+        try:
+            text_data_json = json.loads(text_data)
+            message = text_data_json["message"]
+        except (json.JSONDecodeError, KeyError):
+            print(f"Invalid message format: {text_data}")
+            return
 
+        print(f"Received message from {self.sender}: {message}")
+
+        # Broadcast message to the group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 "type": "chat_message",
                 "message": message,
-                "sender": self.sender,  # Include sender's username
+                "sender": self.sender,
             }
         )
 
     def chat_message(self, event):
-        """ Send the message only to users in the chat room """
         message = event["message"]
-        sender = event["sender"]  # Get sender's username
+        sender = event["sender"]
 
+        # Send message to the connected client
         self.send(text_data=json.dumps({
             "type": "chat",
             "message": message,
-            "sender": sender,  # Send sender's username to the frontend
+            "sender": sender,
         }))
+        print(f"Sent message to {self.sender}: {message} from {sender}")

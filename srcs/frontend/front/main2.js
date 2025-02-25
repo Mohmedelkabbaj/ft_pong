@@ -809,7 +809,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="#/profile" data-page="profile">PROFILE</a>
                         <a href="#/game" data-page="game">GAME</a>
                         <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat">CHAT</a>
+                        <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                         <button id="signout-btn" type="button">Sign Out</button>
                     </div>
                 </div>
@@ -875,7 +875,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="#/profile" data-page="profile" class="active">PROFILE</a>
                         <a href="#/game" data-page="game">GAME</a>
                         <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat">CHAT</a>
+                        <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                         <button id="signout-btn" type="button">Sign Out</button>
                     </div>
                 </div>
@@ -905,7 +905,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="#/profile" data-page="profile">PROFILE</a>
                         <a href="#/game" data-page="game" class="active">GAME</a>
                         <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat">CHAT</a>
+                        <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                     </div>
                 </div>
                 <div class="game-container">
@@ -914,73 +914,62 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `,
         chat: `
-            <div class="main">
-                <div class="header">
-                    <img class="logo" src="images/Pongify_logo.png">
-                    <div class="test">
-                        <a href="#/dashboard" data-page="home">HOME</a>
-                        <a href="#/profile" data-page="profile">PROFILE</a>
-                        <a href="#/game" data-page="game">GAME</a>
-                        <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat" class="active">CHAT</a>
-                    </div>
-                    <!-- Add the current user div here -->
-                    <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
+    <div class="main">
+        <div class="header">
+            <img class="logo" src="images/Pongify_logo.png">
+            <div class="test">
+                <a href="#/dashboard" data-page="home">HOME</a>
+                <a href="#/profile" data-page="profile">PROFILE</a>
+                <a href="#/game" data-page="game">GAME</a>
+                <a href="" data-page="tournament">TOURNAMENT</a>
+                <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
+                <button id="signout-btn" type="button">Sign Out</button>
+            </div>
+            <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
+        </div>
+        <div class="border">
+            <div class="app-container">
+                <div class="user-list" id="chat-friend-list">
+                    <!-- Friend list will be dynamically populated here -->
                 </div>
-                <div class="border">
-                    <div class="app-container">
-                        <div class="user-list">
-                            <div class="user" onclick="switchConversation('user1')">
-                                <div class="icon">
-                                    <img src="https://via.placeholder.com/40" alt="">
-                                </div>
-                                <div>User 1</div>
-                            </div>
-                            <div class="user" onclick="switchConversation('user2')">
-                                <div class="icon">
-                                    <img src="https://via.placeholder.com/40" alt="">
-                                </div>
-                                <div>User 2</div>
-                            </div>
+                <div class="chat-panel">
+                    <div class="chat-header" id="chat-header">
+                        Select a friend to start chatting
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be displayed here -->
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message...">
+                        <div class="btn-container">
+                            <button id="emoji-toggle-btn" class="emoji-toggle-btn">
+                                <img class="emoji" src="https://icons.iconarchive.com/icons/designbolts/emoji/512/Emoji-Blank-icon.png" alt="">
+                            </button>
+                        </div>                    
+                        <div id="emojiPicker" class="emoji-picker">
+                            <span onclick="addEmoji('😀')" class="emoji">😀</span>
+                            <span onclick="addEmoji('😂')" class="emoji">😂</span>
+                            <span onclick="addEmoji('❤️')" class="emoji">❤️</span>
+                            <span onclick="addEmoji('🎉')" class="emoji">🎉</span>
+                            <span onclick="addEmoji('😎')" class="emoji">😎</span>
+                            <span onclick="addEmoji('😅')" class="emoji">😅</span>
+                            <span onclick="addEmoji('😍')" class="emoji">😍</span>
+                            <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
+                            <span onclick="addEmoji('🤔')" class="emoji">🤔</span>
+                            <span onclick="addEmoji('🙌')" class="emoji">🙌</span>
+                            <span onclick="addEmoji('🌟')" class="emoji">🌟</span>
+                            <span onclick="addEmoji('🥳')" class="emoji">🥳</span>
+                            <span onclick="addEmoji('🍆')" class="emoji">🍆</span>
+                            <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
+                            <span onclick="addEmoji('💩')" class="emoji">💩</span>
                         </div>
-                        <div class="chat-panel">
-                            <div class="chat-header" id="chat-header">
-                                Chat with User 1
-                            </div>
-                            <div class="chat-messages" id="chat-messages">
-                                <!-- Messages will be displayed here -->
-                            </div>
-                            <div class="chat-input-container">
-                                <input type="text" class="chat-input" id="chat-input" placeholder="Type a message...">
-                                <div class="btn-container">
-                                    <button id="emoji-toggle-btn" class="emoji-toggle-btn">
-                                        <img class="emoji" src="https://icons.iconarchive.com/icons/designbolts/emoji/512/Emoji-Blank-icon.png" alt="">
-                                    </button>
-                                </div>                    
-                                <div id="emojiPicker" class="emoji-picker">
-                                    <span onclick="addEmoji('😀')" class="emoji">😀</span>
-                                    <span onclick="addEmoji('😂')" class="emoji">😂</span>
-                                    <span onclick="addEmoji('❤️')" class="emoji">❤️</span>
-                                    <span onclick="addEmoji('🎉')" class="emoji">🎉</span>
-                                    <span onclick="addEmoji('😎')" class="emoji">😎</span>
-                                    <span onclick="addEmoji('😅')" class="emoji">😅</span>
-                                    <span onclick="addEmoji('😍')" class="emoji">😍</span>
-                                    <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
-                                    <span onclick="addEmoji('🤔')" class="emoji">🤔</span>
-                                    <span onclick="addEmoji('🙌')" class="emoji">🙌</span>
-                                    <span onclick="addEmoji('🌟')" class="emoji">🌟</span>
-                                    <span onclick="addEmoji('🥳')" class="emoji">🥳</span>
-                                    <span onclick="addEmoji('🍆')" class="emoji">🍆</span>
-                                    <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
-                                    <span onclick="addEmoji('💩')" class="emoji">💩</span>
-                                </div>
-                                <button id="send-btn" class="send-btn">Send</button>
-                            </div>
-                        </div>
+                        <button id="send-btn" class="send-btn">Send</button>
                     </div>
                 </div>
             </div>
-        `,
+        </div>
+    </div>
+    `,
     };
     
     // const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -1104,6 +1093,19 @@ document.addEventListener("DOMContentLoaded", () => {
             startplaybutton.addEventListener('click', () => {
                 console.log("Start Playing button clicked!");
                 navigateTo('#/game');
+            });
+        } else {
+            console.error("Startplay button not found after rendering dashboard!");
+        }
+    }
+
+    function setupchat() {
+        const startplaybutton = document.getElementById("chat");
+        if (startplaybutton) {
+            startplaybutton.addEventListener('click', () => {
+                console.log("Start Playing button clicked!");
+                navigateTo('#/chat');
+                fetchAndDisplayFriends();
             });
         } else {
             console.error("Startplay button not found after rendering dashboard!");
@@ -2339,6 +2341,77 @@ async function acceptFriendRequest(requestId) {
           console.error("Error fetching friend list:", error);
         }
       }
+
+      async function  fetchAndDisplayFriendschat() {
+        try {
+            const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            });
+    
+            if (!response.ok) {
+                console.error("Failed to fetch friend list. Status:", response.status);
+                return;
+            }
+    
+            const data = await response.json();
+            console.log("Friend list API response:", data);
+    
+            let friendList = [];
+            if (data.data && Array.isArray(data.data)) {
+                friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
+            } else {
+                console.error("Unexpected response format for friend list:", data);
+                return;
+            }
+    
+            const friendListContainer = document.getElementById("chat-friend-list");
+            if (!friendListContainer) {
+                console.error("Chat friend list container not found.");
+                return;
+            }
+    
+            friendListContainer.innerHTML = ""; // Clear previous content
+    
+            if (friendList.length === 0) {
+                const noFriendsMessage = document.createElement("div");
+                noFriendsMessage.classList.add("no-friends");
+                noFriendsMessage.textContent = "No friends found.";
+                friendListContainer.appendChild(noFriendsMessage);
+            } else {
+                friendList.forEach(friend => {
+                    const friendDiv = document.createElement("div");
+                    friendDiv.classList.add("user");
+                    friendDiv.setAttribute("data-friend-id", friend.id);
+                    friendDiv.setAttribute("data-friend-name", friend.username);
+                    friendDiv.addEventListener("click", () => switchConversation(friend.username));
+    
+                    const iconDiv = document.createElement("div");
+                    iconDiv.classList.add("icon");
+                    const avatarImg = document.createElement("img");
+                    if (friend.avatar.startsWith("https://")) {
+                        avatarImg.src = friend.avatar || "images/default-avatar.png";
+                    } else {
+                        avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                    }
+                    avatarImg.alt = friend.username || "Friend Avatar";
+                    iconDiv.appendChild(avatarImg);
+    
+                    const nameDiv = document.createElement("div");
+                    nameDiv.textContent = friend.username || "Unknown";
+    
+                    friendDiv.appendChild(iconDiv);
+                    friendDiv.appendChild(nameDiv);
+                    friendListContainer.appendChild(friendDiv);
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching friend list:", error);
+        }
+    }
     // async function loadPendingFriendRequests() {
     //     try {
     //       const response = await fetch("http://127.0.0.1:8000/friends/pending/", {
@@ -3354,58 +3427,167 @@ async function acceptFriendRequest(requestId) {
         const emojiToggleButton = document.getElementById('emoji-toggle-btn');
         const chatHeader = document.getElementById('chat-header');
     
-        let sender = document.getElementById('current-user').dataset.username;
-        let receiver = null;
+        // Fetch current user from profile endpoint
+        let sender;
+        try {
+            const token = localStorage.getItem('authToken');
+            if (!token) throw new Error("No auth token found");
+            
+            const response = await fetch('http://127.0.0.1:8000/profile/', {
+                method: 'GET',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            if (!response.ok) throw new Error(`Profile fetch failed: ${response.status}`);
+            
+            const data = await response.json();
+            sender = data.data?.attributes?.username || 'guest'; // Adjust based on your API response structure
+            console.log("Current user fetched:", sender);
+        } catch (error) {
+            console.error("Error fetching current user:", error);
+            sender = 'guest'; // Fallback if fetch fails
+        }
+    
+        let receiver = null; // Will be set after fetching friends
         let chatSocket = null;
         let messageQueue = [];
         const conversations = JSON.parse(localStorage.getItem('conversations')) || {};
+    
+        // Fetch friends and set the first one as the default receiver
+        await fetchAndDisplayFriendschat();
+    
+        function fetchAndDisplayFriendschat() {
+            return fetch("http://127.0.0.1:8000/friends/list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch friend list. Status: " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Friend list API response:", data);
+                let friendList = [];
+                if (data.data && Array.isArray(data.data)) {
+                    friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
+                } else {
+                    console.error("Unexpected response format for friend list:", data);
+                    return;
+                }
+    
+                const friendListContainer = document.getElementById("chat-friend-list");
+                if (!friendListContainer) {
+                    console.error("Chat friend list container not found.");
+                    return;
+                }
+    
+                friendListContainer.innerHTML = ""; // Clear previous content
+    
+                if (friendList.length === 0) {
+                    const noFriendsMessage = document.createElement("div");
+                    noFriendsMessage.classList.add("no-friends");
+                    noFriendsMessage.textContent = "No friends found.";
+                    friendListContainer.appendChild(noFriendsMessage);
+                } else {
+                    friendList.forEach(friend => {
+                        const friendDiv = document.createElement("div");
+                        friendDiv.classList.add("user");
+                        friendDiv.setAttribute("data-friend-id", friend.id);
+                        friendDiv.setAttribute("data-friend-name", friend.username);
+                        friendDiv.addEventListener("click", () => switchConversation(friend.username));
+    
+                        const iconDiv = document.createElement("div");
+                        iconDiv.classList.add("icon");
+                        const avatarImg = document.createElement("img");
+                        avatarImg.src = friend.avatar.startsWith("https://") 
+                            ? friend.avatar 
+                            : `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                        avatarImg.alt = friend.username || "Friend Avatar";
+                        iconDiv.appendChild(avatarImg);
+    
+                        const nameDiv = document.createElement("div");
+                        nameDiv.textContent = friend.username || "Unknown";
+    
+                        friendDiv.appendChild(iconDiv);
+                        friendDiv.appendChild(nameDiv);
+                        friendListContainer.appendChild(friendDiv);
+                    });
+    
+                    // Set the first friend as the default receiver
+                    if (!receiver && friendList.length > 0) {
+                        receiver = friendList[0].username;
+                        chatHeader.textContent = `Chat with ${receiver}`;
+                        connectWebSocket(); // Connect immediately with the default receiver
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching friend list:", error);
+            });
+        }
     
         function connectWebSocket() {
             if (!receiver || !sender) {
                 console.error("Receiver or sender not set. Cannot connect WebSocket.");
                 return;
             }
-            let url = `ws://${window.location.host}/ws/chat/${sender}/${receiver}/`;
-            console.log("Connecting to WebSocket:", url);
-    
+            const url = `ws://127.0.0.1:8000/ws/chat/${sender}/${receiver}/`;
+            console.log("Connecting to WebSocket:", url, "Sender:", sender, "Receiver:", receiver);
+        
+            // Explicitly close any existing WebSocket
+            if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
+                chatSocket.close(1000, "Switching receiver"); // Normal closure
+                console.log("Closed previous WebSocket connection.");
+            }
+        
             chatSocket = new WebSocket(url);
-    
-            chatSocket.onmessage = function (e) {
-                let data = JSON.parse(e.data);
-                console.log("Data received:", data);
-    
-                if (data.message) {
-                    const timestamp = new Date().toLocaleTimeString();
-                    if (!conversations[receiver]) conversations[receiver] = [];
-                    conversations[receiver].push({ text: data.message, type: 'receiver', time: timestamp });
-                    localStorage.setItem('conversations', JSON.stringify(conversations));
-                    displayMessage(data.message, 'receiver', timestamp);
-                }
-            };
-    
+        
             chatSocket.onopen = function () {
                 console.log("WebSocket connected.");
-                // Send any queued messages
                 while (messageQueue.length > 0) {
                     const message = messageQueue.shift();
                     chatSocket.send(JSON.stringify({ "message": message }));
                 }
             };
-    
+        
+            chatSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                console.log("Data received:", data);
+                if (data.message) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    if (!conversations[receiver]) conversations[receiver] = [];
+                    const type = data.sender === sender ? 'sender' : 'receiver';
+                    conversations[receiver].push({ text: data.message, type: type, time: timestamp });
+                    localStorage.setItem('conversations', JSON.stringify(conversations));
+                    displayMessage(data.message, type, timestamp);
+                }
+            };
+        
             chatSocket.onerror = function (error) {
                 console.error("WebSocket error:", error);
                 setTimeout(connectWebSocket, 1000);
             };
-    
-            chatSocket.onclose = function () {
-                console.log("WebSocket closed. Reconnecting...");
+        
+            chatSocket.onclose = function (event) {
+                console.log("WebSocket closed. Code:", event.code, "Reason:", event.reason);
                 setTimeout(connectWebSocket, 1000);
             };
         }
     
         function sendMessage() {
             const userMessage = chatInput.value.trim();
-            if (!userMessage || !receiver || !chatSocket) return;
+            if (!userMessage || !receiver || !chatSocket) {
+                console.warn("Cannot send message. Missing:", { userMessage, receiver, chatSocket });
+                return;
+            }
     
             const timestamp = new Date().toLocaleTimeString();
             if (!conversations[receiver]) conversations[receiver] = [];
@@ -3418,9 +3600,8 @@ async function acceptFriendRequest(requestId) {
             if (chatSocket.readyState === WebSocket.OPEN) {
                 chatSocket.send(JSON.stringify({ "message": userMessage }));
             } else {
-                // Queue the message if the WebSocket is not open
                 messageQueue.push(userMessage);
-                console.log("WebSocket is not open. Message queued.");
+                console.log("WebSocket not open. Message queued:", userMessage);
             }
         }
     
@@ -3430,7 +3611,7 @@ async function acceptFriendRequest(requestId) {
     
             const senderSpan = document.createElement('span');
             senderSpan.classList.add('message-sender');
-            senderSpan.textContent = senderType === 'sender' ? 'You' : receiver; // Show "You" for sender, receiver's name for receiver
+            senderSpan.textContent = senderType === 'sender' ? 'You' : receiver;
     
             const messageText = document.createElement('span');
             messageText.classList.add('message-text');
@@ -3481,9 +3662,6 @@ async function acceptFriendRequest(requestId) {
     
         window.switchConversation = switchConversation;
     }
-    
-    document.addEventListener('DOMContentLoaded', initializechatFunctionality);
-    
     
     
     
