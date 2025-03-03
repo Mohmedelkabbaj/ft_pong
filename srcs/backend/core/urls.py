@@ -1,6 +1,8 @@
 from django.urls import path, include
 from . import views, const
+
+
 urlpatterns = [
-	path('game/', views.game_state, name='game_state'),
-	path('direction/', views.PaddleMove, name='logic'),
+    path('game/', views.GameInitView.as_view(), name='game_init'),
+    path('match-history/', views.MatchHistoryView.as_view(), name='match_history'),
 ]

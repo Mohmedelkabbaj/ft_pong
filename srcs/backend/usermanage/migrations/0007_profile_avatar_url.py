@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='profile',
             name='avatar_url',
-            field=models.URLField(blank=True, default="/media/avatars/Profile_avatar_placeholder_large.png", max_length=500),
+            field=models.URLField(blank=True, default='https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png', max_length=500),
         ),
     ]

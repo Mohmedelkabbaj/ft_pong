@@ -38,7 +38,7 @@ class RegistrationSerializer_42(serializers.ModelSerializer):
             last_name = validated_data['last_name']
         )
         user.set_unusable_password()
-        user.save()
+        # user.save()
         return user
 
 class ProfileDetailSerializer(serializers.ModelSerializer):

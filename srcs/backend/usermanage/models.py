@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-DEFAULT_AVATAR_URL = "/media/avatars/Profile_avatar_placeholder_large.png"
+DEFAULT_AVATAR_URL = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

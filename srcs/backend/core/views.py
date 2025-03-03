@@ -1,52 +1,63 @@
-from django.http import HttpResponse
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from core.models import init, update
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseNotAllowed
-import json
-import logging
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from .models import MatchHistory
+from rest_framework import status
 
-logger = logging.getLogger(__name__)
-@csrf_exempt
-@api_view(['POST'])
+class GameInitView(APIView):
+    permission_classes = [AllowAny]
 
-@permission_classes([AllowAny])
-def game_state(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        left_paddle = data.get('leftPaddle')
-        right_paddle = data.get('rightPaddle')
-        ball = data.get('ball')
-        direction = data.get('direction')
-        init(left_paddle, right_paddle, ball, direction)
-        response = update(left_paddle, right_paddle, ball)
-        return JsonResponse(response)
-    else:
-        return JsonResponse({'method: ' + request.method}, status=710)
-    return JsonResponse({'status': 'error'}, status=400)
+    def post(self, request):
+        data = request.data
+        if data.get('state') == 'init':
+            return JsonResponse({
+                'LeftPaddle': {'x': -8, 'y': 0, 'z': 15},
+                'RightPaddle': {'x': 8, 'y': 0, 'z': -15},
+                'ball': {'x': 0, 'y': 0, 'z': 0},
+            })
+        return JsonResponse({'error': 'Invalid state'}, status=400)
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def PaddleMove(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        direction = data.get('direction')
-        right_paddle = data.get('rightPaddle')
-        if direction == 'up':
-        	right_paddle['dy'] = -5
-        	if right_paddle['y'] + right_paddle['dy'] < 0:
-        		right_paddle['y'] = 0
-        		right_paddle['dy'] = 0
-        elif direction == 'down':
-        	right_paddle['dy'] = 5
-        	if right_paddle['y'] + right_paddle['height'] + right_paddle['dy'] < 0:
-        		right_paddle['y'] = 0
-        		right_paddle['dy'] = 0
-        elif direction == 'stop':
-        	right_paddle['dy'] = 0
-        return JsonResponse({'status': 'success', 'rightPaddle': right_paddle}, status=200)
-    return JsonResponse({'status': 'error'}, status=404)
+
+class MatchHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        data = request.data
+        
+        try:
+            match = MatchHistory(
+                user=request.user,
+                player1_username=data['player1_username'],
+                player2_username=data['player2_username'],
+                score1=data['score1'],
+                score2=data['score2'],
+            )
+            match.save()
+
+            user_history = MatchHistory.objects.filter(user=request.user).values(
+                'player1_username', 'player2_username', 'score1', 'score2', 'created_at'
+            )
+
+            return JsonResponse({
+                'message': 'Local match history saved',
+                'user_history': list(user_history)
+            }, status=201)
+
+        except KeyError as e:
+            return JsonResponse({'error': f"Missing field: {str(e)}"}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    def get(self, request):
+        try:
+            user_history = MatchHistory.objects.filter(user=request.user).values(
+                'player1_username', 'player2_username', 'score1', 'score2', 'created_at'
+            )
+
+            return JsonResponse({
+                'username': request.user.username,
+                'match_history': list(user_history)
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)

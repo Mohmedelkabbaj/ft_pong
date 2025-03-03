@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 	'corsheaders',
 	'channels',
 	'usermanage',
-    'chat',
+	'chat',
 ]
 
 MIDDLEWARE = [
@@ -75,45 +75,26 @@ SIMPLE_JWT = {
 }
 
 CHANNEL_LAYERS = {
-    'default': {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+    "redis": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
     },
 }
 
-# REST_FRAMEWORK = {
-#     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
-#     'DEFAULT_PARSER_CLASSES': (
-#         'rest_framework_json_api.parsers.JSONParser',
-#     ),
-#     'DEFAULT_RENDERER_CLASSES': (
-#         'rest_framework_json_api.renderers.JSONRenderer',
-#         'rest_framework.renderers.BrowsableAPIRenderer'
-#     ),
-#     'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
-#     'DEFAULT_FILTER_BACKENDS': (
-#         'rest_framework_json_api.filters.QueryParameterValidationFilter',
-#         'rest_framework_json_api.filters.OrderingFilter',
-#         'rest_framework_json_api.django_filters.DjangoFilterBackend',
-#         'rest_framework.filters.SearchFilter',
-#     ),
-#     'SEARCH_PARAM': 'filter[search]',
-#     'TEST_REQUEST_RENDERER_CLASSES': (
-#         'rest_framework_json_api.renderers.JSONRenderer',
-#     ),
-#     'TEST_REQUEST_DEFAULT_FORMAT': 'vnd.api+json',
-# 	'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     ],
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ],
-# }
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
     'DEFAULT_PARSER_CLASSES': (
-        'rest_framework_json_api.parsers.JSONParser',  # For JSON:API
-        'rest_framework.parsers.JSONParser',  # For standard JSON
+        'rest_framework_json_api.parsers.JSONParser',
+        'rest_framework.parsers.JSONParser',
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework_json_api.renderers.JSONRenderer',
@@ -162,7 +143,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-ASGI_APPLICATION = "backend.asgi.application"
+ASGI_APPLICATION = "backend.routing.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -197,10 +178,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGGING = {
-    "version": 1,  # the dictConfig format version
-    "disable_existing_loggers": False,  # retain the default loggers
-}
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -211,7 +189,19 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

@@ -1,37 +1,16 @@
 # from django.db import models
 
 # Create your models here.
-import random
-import json
-from django.http import JsonResponse
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
+from django.db import models
+from django.contrib.auth.models import User
 
-@permission_classes([AllowAny])
-def update(left_paddle, right_paddle, ball):
-	left_paddle['y'] += left_paddle['dy']
-	right_paddle['y'] += right_paddle['dy']
-	ball['x'] += ball['dx']
-	ball['y'] += ball['dy']
-	response = {
-		'ball': ball,
-		'right_paddle': right_paddle,
-		'left_paddle': left_paddle,
-	}
-	return response
+class MatchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='local_matches')
+    player1_username = models.CharField(max_length=150)
+    player2_username = models.CharField(max_length=150)
+    score1 = models.IntegerField()
+    score2 = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
-@permission_classes([AllowAny])
-def BallMove(ball):
-	if ball['dx'] == 0 and ball['dy'] == 0:
-		if (random.random() < 0.5):
-			ball['dx'] = 2.5
-			ball['dy'] = 2.5
-		else:
-			ball['dx'] = -2.5
-			ball['dy'] = -2.5
-
-@permission_classes([AllowAny])
-def init(left_paddle, right_paddle, ball, direction):
-	BallMove(ball)
-	update(left_paddle, right_paddle, ball)
-	print("init")
+    def __str__(self):
+        return f"{self.user.username}: {self.player1_username} vs {self.player2_username} ({self.score1}-{self.score2})"
